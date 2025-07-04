@@ -20,4 +20,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::prefix('v1')->group(function () {
     Route::post('/users', [ApiUserController::class, 'store'])->name('users.store');
+    Route::post('/login', [ApiUserController::class, 'login'])->name('users.login');
+    ROute::middleware('auth:sanctum')->group(function(){
+        Route::post('/logout', [ApiUserController::class, 'logout'])->name('users.logout');
+        // Route::get('/users', [ApiUserController::class, 'index'])->name('users.index');
+        // Route::get('/users/{id}', [ApiUserController::class, 'show'])->name('users.show');
+        // Route::put('/users/{id}', [ApiUserController::class, 'update'])->name('users.update');
+        // Route::delete('/users/{id}', [ApiUserController::class, 'destroy'])->name('users.destroy');
+    });
 });

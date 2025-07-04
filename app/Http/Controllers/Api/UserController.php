@@ -10,12 +10,6 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    /**
-     * Store a newly created user in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(Request $request)
     {
         // Validate the request data
@@ -41,5 +35,43 @@ class UserController extends Controller
             'message' => 'User created successfully',
             'user' => $user,
         ], 201);
+    }
+
+    public function login(Request $request)
+    {
+        // Validate the request data
+        $validate = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        // Check user
+        $user = User::where('email', $validate['email'])->first();
+        if (!$user || !Hash::check($validate['password'], $user->password))
+        {
+            return response()->json([
+                'message' => 'Invalid credentials',
+            ], 401);  
+        }
+
+        // Generate a token for the user
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Return a success response with the token
+        return response()->json([
+            'message' => 'Login successful',
+            'token' => $token,
+        ], 200);   
+    }
+
+    public function logout(Request $request)
+    {
+        // Revoke the user's token
+        $request->user()->currentAccessToken()->delete();
+
+        // Return a success response
+        return response()->json([
+            'message' => 'Logout successful',
+        ], 200);
     }
 }
