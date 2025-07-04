@@ -74,4 +74,21 @@ class UserController extends Controller
             'message' => 'Logout successful',
         ], 200);
     }
+
+    public function show($id){
+        // Find the user by ID
+        $user = User::find($id);
+
+        // Check if user exists
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        // Return the user data
+        return response()->json([
+            'user' => $user,
+        ], 200);
+    }
 }
