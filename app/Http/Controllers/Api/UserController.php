@@ -10,6 +10,10 @@ use App\Models\User;
 
 class UserController extends Controller
 {
+    public function index()
+    {
+        return response()->json(['message' => 'Welcome to the API']);
+    }
     public function store(Request $request)
     {
         // Validate the request data
@@ -64,10 +68,18 @@ class UserController extends Controller
         ], 200);   
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
+        $user = auth()->user();
+        // Check if user is authenticated
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not authenticated',
+            ], 401);
+        }
+
         // Revoke the user's token
-        $request->user()->currentAccessToken()->delete();
+        $user->tokens()->delete();
 
         // Return a success response
         return response()->json([
@@ -75,9 +87,9 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function show($id){
-        // Find the user by ID
-        $user = User::find($id);
+    public function show(){
+        // Find the user 
+        $user = auth()->user();
 
         // Check if user exists
         if (!$user) {
@@ -88,6 +100,37 @@ class UserController extends Controller
 
         // Return the user data
         return response()->json([
+            'user' => $user,
+        ], 200);
+    }
+
+    public function update(Request $request)
+    {
+        // Find the user by ID
+        $user = auth()->user();
+
+        // Check if user exists
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        // Validate the request data
+        $validatedData = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|email|unique:users,email,' . $user->id,
+            'password' => 'sometimes|required|string|min:8',
+            'address' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:15',
+        ]);
+
+        // Update the user
+        $user->update(array_filter($validatedData));
+
+        // Return a success response
+        return response()->json([
+            'message' => 'User updated successfully',
             'user' => $user,
         ], 200);
     }

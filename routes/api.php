@@ -15,16 +15,14 @@ use App\Http\Controllers\Api\UserController as ApiUserController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
 Route::prefix('v1')->group(function () {
+    Route::get('/login', [ApiUserController::class, 'index'])->name('users.index');
     Route::post('/users', [ApiUserController::class, 'store'])->name('users.store');
     Route::post('/login', [ApiUserController::class, 'login'])->name('users.login');
-    ROute::middleware('auth:sanctum')->group(function(){
+    Route::middleware('auth:sanctum')->group(function(){
         Route::post('/logout', [ApiUserController::class, 'logout'])->name('users.logout');
-        Route::get('/users/{id}', [ApiUserController::class, 'show'])->name('users.show');
-        // Route::put('/users/{id}', [ApiUserController::class, 'update'])->name('users.update');
-        // Route::delete('/users/{id}', [ApiUserController::class, 'destroy'])->name('users.destroy');
+        Route::get('/users', [ApiUserController::class, 'show'])->name('users.show');
+        Route::put('/users', [ApiUserController::class, 'update'])->name('users.update');
     });
 });
