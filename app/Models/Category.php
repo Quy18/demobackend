@@ -17,6 +17,7 @@ class Category extends Model
     protected $fillable = [
         'name',
         'description',
+        'image_url',
     ];
     /**
      * The attributes that should be hidden for serialization.
