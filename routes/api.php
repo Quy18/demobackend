@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController as ApiUserController;
+use App\Http\Controllers\Api\CategoryController as ApiCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,4 +26,6 @@ Route::prefix('v1')->group(function () {
         Route::get('/users', [ApiUserController::class, 'show'])->name('users.show');
         Route::put('/users', [ApiUserController::class, 'update'])->name('users.update');
     });
+    Route::get('/categories', [ApiCategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/{id}', [ApiCategoryController::class, 'showProductByCateId'])->name('categories.products');
 });
