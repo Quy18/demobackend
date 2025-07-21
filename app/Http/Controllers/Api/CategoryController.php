@@ -19,6 +19,8 @@ class CategoryController extends Controller
         }
         return response()->json($categoryData);
     }
+
+    // Show products by category ID 
     public function showProductByCateId($id)
     {
         // Logic to handle the request and return a specific category by ID
