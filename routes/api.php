@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController as ApiUserController;
 use App\Http\Controllers\Api\CategoryController as ApiCategoryController;
 use App\Http\Controllers\Api\ProductController as ApiProductController;
+use App\Http\Controllers\Api\CartController as ApiCartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,11 +24,17 @@ Route::prefix('v1')->group(function () {
     Route::post('/users', [ApiUserController::class, 'store'])->name('users.store');
     Route::post('/login', [ApiUserController::class, 'login'])->name('users.login');
 
-    //user routes
+    // Authentication routes
     Route::middleware('auth:sanctum')->group(function(){
+        // User profile routes
         Route::post('/logout', [ApiUserController::class, 'logout'])->name('users.logout');
         Route::get('/users', [ApiUserController::class, 'show'])->name('users.show');
         Route::put('/users', [ApiUserController::class, 'update'])->name('users.update');
+
+        // Cart routes
+        Route::get('/cart', [ApiCartController::class, 'show'])->name('cart.show');
+        Route::post('/cart/create', [ApiCartController::class, 'createCart'])->name('cart.create');
+        Route::put('/cart/add', [ApiCartController::class, 'addItem'])->name('cart.add');
     });
 
     //category routes

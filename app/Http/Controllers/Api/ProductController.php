@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\Validator;
+use App\Models\Cart;
 
 class ProductController extends Controller
 {
@@ -55,6 +57,5 @@ class ProductController extends Controller
     }
 
     //lọc sản phẩm theo giá
-    //thêm sản phẩm vào giỏ hàng
     //sản phẩm liên quan
 }
