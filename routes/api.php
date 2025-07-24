@@ -35,6 +35,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/cart', [ApiCartController::class, 'show'])->name('cart.show');
         Route::post('/cart/create', [ApiCartController::class, 'createCart'])->name('cart.create');
         Route::put('/cart/add', [ApiCartController::class, 'addItem'])->name('cart.add');
+        Route::put('/cart/remove', [ApiCartController::class, 'removeItem'])->name('cart.remove');
     });
 
     //category routes

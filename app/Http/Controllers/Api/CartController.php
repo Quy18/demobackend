@@ -86,4 +86,35 @@ class CartController extends Controller
             'item' => $cartItem,
         ], 201);
     }
+
+    // Remove an item from the cart
+    public function removeItem(Request $request){
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+        ]);
+
+        $cart = Cart::where('user_id', auth()->id())->first();
+        
+        if (!$cart) {
+            return response()->json(['message' => 'Cart not found'], 404);
+        }
+
+        $cartItem = CartItem::where('cart_id', $cart->id)->where('product_id', $request->product_id)->first();
+
+        if (!$cartItem) {
+            return response()->json(['message' => 'Item not found in cart'], 404);
+        }
+
+        // Cập nhật tổng giá trị giỏ hàng
+        $cart->total_price -= $cartItem->price;
+        $cart->save();
+
+        // Xóa mục khỏi giỏ hàng
+        $cartItem->delete();
+
+        return response()->json([
+            'message' => 'Item removed from cart successfully',
+            'cart' => $cart,
+        ], 200);
+    }
 }
