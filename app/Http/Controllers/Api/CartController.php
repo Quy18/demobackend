@@ -117,4 +117,52 @@ class CartController extends Controller
             'cart' => $cart,
         ], 200);
     }
+
+    public function updateItem(Request $request) {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:0',
+        ]);
+        
+        $cart = Cart::where('user_id', auth()->id())->first();
+
+        if (!$cart) {
+            return response()->json(['message' => 'Cart not found'], 404);
+        }
+
+        $cartItem = CartItem::where('cart_id', $cart->id)->where('product_id', $request->product_id)->first();
+
+        if (!$cartItem) {
+            return response()->json(['message' => 'Item not found in cart'], 404);
+        }
+
+        if ($request->quantity <= 0) {
+            // If quantity is 0 or less, remove the item
+            $cartItem->delete();
+            $cart->total_price -= $cartItem->price;
+            $cart->save();
+            return response()->json([
+                'message' => 'Item removed from cart',
+                'cart' => $cart,
+            ], 200);
+        } else {
+            $quantityItem = $cartItem->quantity;
+
+            // Update the quantity and price
+            $price = Product::find($request->product_id)->price;
+            $cartItem->quantity = $request->quantity;
+            $cartItem->price = $price * $request->quantity;
+            $cartItem->save();
+
+            // Update the total price of the cart
+            $cart->total_price += ($request->quantity - $quantityItem) * $price;
+            $cart->save();
+
+            return response()->json([
+                'message' => 'Cart item updated successfully',
+                'item' => $cartItem,
+                'cart' => $cart,
+            ], 200);
+        }
+    }
 }
