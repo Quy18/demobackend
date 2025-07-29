@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\UserController as ApiUserController;
 use App\Http\Controllers\Api\CategoryController as ApiCategoryController;
 use App\Http\Controllers\Api\ProductController as ApiProductController;
 use App\Http\Controllers\Api\CartController as ApiCartController;
+use App\Http\Controllers\Api\OrderController as ApiOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,11 @@ Route::prefix('v1')->group(function () {
         Route::put('/cart/add', [ApiCartController::class, 'addItem'])->name('cart.add');
         Route::put('/cart/remove', [ApiCartController::class, 'removeItem'])->name('cart.remove');
         Route::put('/cart/update', [ApiCartController::class, 'updateItem'])->name('cart.update');
+
+        // Order routes
+        Route::get('/orders', [ApiOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{id}', [ApiOrderController::class, 'showOrderDetails'])->name('orders.show');
+
     });
 
     //category routes
