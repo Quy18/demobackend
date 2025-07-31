@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\User;
+use App\Models\Product;
 
 class OrderController extends Controller
 {
@@ -108,7 +109,39 @@ class OrderController extends Controller
     }
 
     // Tạo trực tiếp đơn hàng mới
-    public function createOrder(Request $request){
-        
+    public function createOrderDirect(Request $request){
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $product = Product::find($request->product_id);
+
+        if (!$product) {
+            return response()->json([
+                'message' => 'Product not found',
+            ], 404);
+        }
+
+        $user = User::find(auth()->id());
+
+        $order = Order::create([
+            'user_id' => auth()->id(),
+            'total_amount' => $product->price * $request->quantity,
+            'shipping_address' => $user->address,
+        ]);
+
+        $orderItem = OrderItem::create([
+            'order_id' => $order->id,
+            'product_id' => $product->id,
+            'quantity' => $request->quantity,
+            'price' => $product->price,
+        ]);
+
+        return response()->json([
+            'message' => 'Order created successfully',
+            'data' => $order,
+            'item' => $orderItem,
+        ], 201);
     }
 }
